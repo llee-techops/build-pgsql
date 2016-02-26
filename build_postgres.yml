@@ -3,8 +3,8 @@ platform: linux
 image: docker:///busybox
 
 inputs:
-- name: repo1
+- name: build-pgsql
   path: .
 
 run:
-  path: repo1/build-pgsql/build_postgresql.sh
+  path: build-pgsql/build_postgresql.sh
