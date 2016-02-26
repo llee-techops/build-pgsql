@@ -1,0 +1,10 @@
+---
+platform: linux
+image: docker:///busybox
+
+inputs:
+- name: build-pgsql
+  path: .
+
+run:
+  path: ./build_postgresql.sh
