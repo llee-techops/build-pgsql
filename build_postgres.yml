@@ -7,4 +7,4 @@ inputs:
   path: .
 
 run:
-  path: ./build_postgresql.sh
+  path: build-pgsql/build_postgresql.sh
