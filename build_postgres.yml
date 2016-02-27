@@ -8,4 +8,4 @@ inputs:
 
 run:
   path: ls
-  args: -lR
+  args: [-lR]
