@@ -7,7 +7,7 @@ cd git-postgres
 gmake
 # su
 gmake install
-adduser postgres
+adduser postgres -D
 mkdir /usr/local/pgsql/data
 chown postgres /usr/local/pgsql/data
 su - postgres
