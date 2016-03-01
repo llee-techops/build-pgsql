@@ -5,7 +5,7 @@ set -e
 cd git-postgres
 ./configure
 gmake
-su
+# su
 gmake install
 adduser postgres
 mkdir /usr/local/pgsql/data
@@ -15,3 +15,4 @@ su - postgres
 /usr/local/pgsql/bin/postgres -D /usr/local/pgsql/data >logfile 2>&1 &
 /usr/local/pgsql/bin/createdb test
 /usr/local/pgsql/bin/psql test
+exit
