@@ -1,6 +1,6 @@
 #!/bin/bash
 
 set -e
-./build_pgsql.sh
-./init_postgresql.sh
+./ci-scripts/build_pgsql.sh
+./ci-scripts/init_postgresql.sh
 exit
