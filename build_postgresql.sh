@@ -7,7 +7,7 @@ cd git-postgres
 gmake
 # su
 gmake install
-adduser postgres -D
+adduser --disabled-password --gecos ""  postgres
 mkdir /usr/local/pgsql/data
 chown postgres /usr/local/pgsql/data
 su - postgres
