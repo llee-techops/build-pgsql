@@ -2,7 +2,7 @@
 
 set -e
 
-cd /git-postgres
+cd ../git-postgres
 ./configure
 gmake
 su
