@@ -2,7 +2,7 @@
 
 set -e
 
-#cd postgresql-9.1.20
+cd /git-postgres
 ./configure
 gmake
 su
