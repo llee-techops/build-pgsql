@@ -1,0 +1,32 @@
+---
+resources:
+- name: resource-postgres
+  type: git
+  source:
+    uri: https://github.com/postgres/postgres.git
+- name: resource-scripts
+  type: git
+  source:
+    uri: https://github.com/llee-techops/build-pgsql.git
+jobs:
+- name: job-build-postgres
+  public: true
+  serial: true
+  plan:
+  - aggregate:
+    - get: git-postgres
+      resource: resource-postgres
+    - get: ci-scripts
+      resource: resource-scripts
+  - task: build-postgres-image
+    config:
+      platform: linux
+      image: docker:///ubuntu#14.04
+      run:
+        path: bash
+        args:
+        - "./ci-scripts/build_postgresql.sh"
+        - "."
+      inputs:
+      - name: git-postgres
+      - name: ci-scripts
