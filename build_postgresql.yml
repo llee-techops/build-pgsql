@@ -1,4 +1,5 @@
 ---
+groups: []
 resources:
 - name: resource-postgres
   type: git
@@ -21,12 +22,13 @@ jobs:
   - task: build-postgres-image
     config:
       platform: linux
-      image: docker:///ubuntu#14.04
+      image: docker:///sgriddalur/ubuntu-gcc#v2
       run:
         path: bash
         args:
-        - "./ci-scripts/build_postgresql.sh"
+        - "./ci-scripts/build.sh"
         - "."
       inputs:
       - name: git-postgres
       - name: ci-scripts
+
