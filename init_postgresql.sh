@@ -17,7 +17,7 @@ su - postgres -c "/usr/local/pgsql/bin/pg_ctl -D /usr/local/pgsql/data -l logfil
 su - postgres -c "cat logfile"
 
 # check if postgres service is running
-if (($(ps ax | grep -v grep | grep $SERVICE) > /dev/null))
+if (( $(ps -ef | grep -v grep | grep $SERVICE | wc -l) > 0 ))
 then
    echo “$SERVICE service running, everything is fine”
 else
