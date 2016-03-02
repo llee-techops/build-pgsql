@@ -1,13 +1,13 @@
 #!/bin/bash
 
 set -e
-SERVICE=’postgres’
+SERVICE=postgres
 
 echo "Starting postgres"
 #is_init=`su - postgres -c 'echo "ps -ef" | psql | grep dcd_odasa | wc -l'`
 su - postgres -c "/usr/local/pgsql/bin/initdb -D /usr/local/pgsql/data"
 
-echo "startpostgres and logs"
+echo "start postgres and logs"
 su - postgres -c "/usr/local/pgsql/bin/pg_ctl -D /usr/local/pgsql/data -l logfile start"
 
 
@@ -17,7 +17,7 @@ su - postgres -c "/usr/local/pgsql/bin/pg_ctl -D /usr/local/pgsql/data -l logfil
 su - postgres -c "cat logfile"
 
 # check if postgres service is running
-if ps ax | grep -v grep | grep $SERVICE > /dev/null
+if (($(ps ax | grep -v grep | grep $SERVICE) > /dev/null))
 then
    echo “$SERVICE service running, everything is fine”
 else
