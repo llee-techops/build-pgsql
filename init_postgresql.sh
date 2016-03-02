@@ -8,7 +8,7 @@ echo "Starting postgres"
 su - postgres -c "/usr/local/pgsql/bin/initdb -D /usr/local/pgsql/data"
 echo "starting logs"
 
-su - postgres -c "/usr/local/pgsql/bin/postgres -D /usr/local/pgsql/data >logfile 2>&1 &"
+su - postgres -c "/usr/local/pgsql/bin/pg_ctl -D /usr/local/pgsql/data -l logfile start"
 
 
 # check if postgres service is running
