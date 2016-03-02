@@ -6,10 +6,15 @@ SERVICE=’postgres’
 echo "Starting postgres"
 #is_init=`su - postgres -c 'echo "ps -ef" | psql | grep dcd_odasa | wc -l'`
 su - postgres -c "/usr/local/pgsql/bin/initdb -D /usr/local/pgsql/data"
-echo "starting logs"
 
+echo "startpostgres and logs"
 su - postgres -c "/usr/local/pgsql/bin/pg_ctl -D /usr/local/pgsql/data -l logfile start"
 
+
+#su - postgres -c "/usr/local/pgsql/bin/postmaster -D /usr/local/pgsql/data >logfile 2>&1 &"
+
+#cat the log file
+su - postgres -c "cat logfile"
 
 # check if postgres service is running
 if ps ax | grep -v grep | grep $SERVICE > /dev/null
