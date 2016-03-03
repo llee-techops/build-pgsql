@@ -9,11 +9,12 @@ echo "========= running gmake check ============="
 gmake check
 
 # su
+echo "========= running gmake install ============="
 gmake install
 
-adduser --disabled-password --gecos ""  postgres
-mkdir /usr/local/pgsql/data
-chown postgres /usr/local/pgsql/data
+#adduser --disabled-password --gecos ""  postgres
+#mkdir /usr/local/pgsql/data
+#chown postgres /usr/local/pgsql/data
 
 
 
