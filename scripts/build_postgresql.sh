@@ -17,7 +17,7 @@ gmake install
 #chown postgres /usr/local/pgsql/data
 
 echo "Starting postgres"
-/usr/local/pgsql/bin/initdb -D /usr/local/pgsql/data
+/usr/local/pgsql/bin/initdb -A -D /usr/local/pgsql/data
 
 echo "start postgres and logs"
 /usr/local/pgsql/bin/pg_ctl -D /usr/local/pgsql/data -l logfile start
