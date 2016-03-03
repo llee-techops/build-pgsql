@@ -5,8 +5,8 @@ set -e
 cd git-postgres
 ./configure
 gmake
-echo "========= running gmake check ============="
-gmake check
+#echo "========= running gmake check ============="
+#gmake check
 
 # su
 echo "========= running gmake install ============="
