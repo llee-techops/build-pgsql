@@ -25,7 +25,6 @@ else
    #echo “$SERVICE is not running!” | mail -s “$SERVICE down” root
 fi
 
-
 # moving this to test.sh
 #echo "creating test DB..."
 #su - postgres -c "/usr/local/pgsql/bin/createdb test -U postgres"
