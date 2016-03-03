@@ -1,0 +1,21 @@
+{
+  "variables": {
+    "image_name": "ubuntu-os-image",
+    "image_tag": "v1"
+  },
+  "description": "sgriddalur ubuntu 14.04",
+  "builders": [
+    {
+      "type": "docker",
+      "image": "ubuntu:14.04",
+      "pull": true,
+      "commit": true
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "script": "install_dev_env.bash"
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+---
+## This file to be consumed by packer for build pipeline
+groups: []
+resources:
+- name: resource-postgres
+  type: git
+  source:
+    uri: https://github.com/postgres/postgres.git
+- name: resource-scripts
+  type: git
+  source:
+    uri: https://github.com/llee-techops/build-pgsql.git
+jobs:
+- name: ubuntu-os-image-build
+  serial: true
+  public: true
+  plan:
+  - aggregate:
+    - get: src
+      resource: resource-postgres
+      trigger: true
+    - get: resource-scripts
+#      trigger: true
+#      passed: [packer-builder-image-build]
+#      params:
+#        skip_download: true
+  - task: packer_build
+    privileged: true
+    config:
+      platform: linux
+#      image: docker://docker.ci.eng.pivotal.io/packer-builder
+      inputs:
+        - name: src
+          path: ci-infrastructure
+      run:
+        path: /opt/bin/packer-build.sh
+        args:
+          - ci-infrastructure/packer/os-images/ubuntu-14.04/ubuntu-14.04.json
+          - packer_build/ubuntu-14.04-image.tar
+      outputs:
+        - name: packer_build
+  - task: serverspec
+    privileged: true
+    config:
+      platform: linux
+      image: docker://docker.ci.eng.pivotal.io/packer-builder
+      inputs:
+        - name: src
+          path: ci-infrastructure
+        - name: packer_build
+          path: packer_build
+      run:
+        path: ci-infrastructure/packer/os-images/ubuntu-14.04/ubuntu_spec.bash
+  - put: ubuntu-os-image
+    params:
+      import_file: packer_build/ubuntu-14.04-image.tar
+#- name: job-build-postgres
+#  public: true
+#  serial: true
+#  plan:
+#  - aggregate:
+#    - get: git-postgres
+#      resource: resource-postgres
+#    - get: ci-scripts
+#      resource: resource-scripts
+#  - task: build-postgres-image
+#    config:
+#      platform: linux
+#      image: docker:///sgriddalur/ubuntu-gcc#v2
+#      run:
+#        path: bash
+#        args:
+#        - "./ci-scripts/build.sh"
+#        - "."
+#      inputs:
+#      - name: git-postgres
+#      - name: ci-scripts
+
