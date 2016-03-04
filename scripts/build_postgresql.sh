@@ -7,7 +7,7 @@ cd git-postgres
 gmake
 
 echo "========= running gmake check ============="
-gmake check
+su postgres -c "make check"
 
 # su
 echo "========= running gmake install ============="
@@ -25,7 +25,7 @@ chown -R postgres /usr/local/pgsql/data
 
 echo "===============   check postgres installations  ======================="
 echo "======================================================================="
-gmake installcheck
+su postgres -c "gmake installcheck"
 #su - postgres
 #/usr/local/pgsql/bin/initdb -D /usr/local/pgsql/data
 #/usr/local/pgsql/bin/postgres -D /usr/local/pgsql/data >logfile 2>&1 &
