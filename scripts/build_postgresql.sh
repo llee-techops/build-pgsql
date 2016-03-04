@@ -27,7 +27,7 @@ su postgres -c "/usr/local/pgsql/bin/pg_ctl start -l logfile -D /usr/local/pgsql
 
 echo "===============   check postgres installations  ======================="
 echo "======================================================================="
-su postgres -c "gmake installcheck"
+gmake installcheck
 #su - postgres
 #/usr/local/pgsql/bin/initdb -D /usr/local/pgsql/data
 #/usr/local/pgsql/bin/postgres -D /usr/local/pgsql/data >logfile 2>&1 &
