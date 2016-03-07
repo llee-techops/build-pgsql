@@ -1,0 +1,33 @@
+{
+  "variables": {
+    "image_name": "leel15/ubuntu-gcc-image",
+    "image_tag": "latest",
+    "image_version": "14.04"
+  },
+  "description": "ubuntu {{user `image_version`}} with gcc",
+  "builders": [
+    {
+      "type": "docker",
+      "image": "ubuntu:{{user `image_version`}}",
+      "pull": true,
+      "commit": true
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "script": "../../packer/ubuntu/install_dev_env.bash"
+    }
+  ],
+  "post-processors": [
+    [
+      {
+        "type": "docker-tag",
+        "repository": "{{user `image_name`}}",
+        "tag": "{{user `image_tag`}}",
+        "force": true
+      },
+      "docker-push"
+    ]
+  ]
+}
