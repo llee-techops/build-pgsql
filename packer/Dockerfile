@@ -4,7 +4,7 @@ FROM alpine:3.3
 RUN apk add --update unzip jq iptables build-base ruby ruby-dev ruby-io-console ruby-json ruby-bundler docker && rm -rf /var/cache/apk/*
 
 # Fetch packer executable
-ADD https://releases.hashicorp.com/packer/0.8.6/packer_0.8.6_linux_amd64.zip /tmp/packer.zip
+ADD https://releases.hashicorp.com/packer/0.9.0/packer_0.9.0_linux_amd64.zip /tmp/packer.zip
 RUN unzip /tmp/packer.zip -d /usr/local/bin && rm /tmp/packer.zip
 
 ADD scripts/packer-build.sh /opt/bin/packer-build.sh

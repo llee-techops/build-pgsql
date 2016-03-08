@@ -177,10 +177,10 @@ resources:
 - name: packer-builder-image
   type: docker-image
   source:
-    repository: docker:///sgriddalur/packer-builder
+    repository: sgriddalur/packer-builder
     tag: latest
 
 - name: postgres-toolchain-image
   type: docker-image
   source:
-    repository: docker:///sgriddalur/postgres-toolchain-image
+    repository: sgriddalur/postgres-toolchain-image
