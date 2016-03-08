@@ -1,0 +1,186 @@
+---
+#This yaml file for Postgres pipelines as image like toolsmiths
+groups:
+- name: all
+  jobs:
+  - job-build-postgres
+- name: packer
+  jobs:
+  - packer-builder-image-build
+- name: postgres
+  jobs:
+  - compile-postgres
+  - checkinstall-postgres
+- name: test
+### Jobs ###
+jobs:
+- name: job-build-postgres
+  public: true
+  serial: true
+  plan:
+  - aggregate:
+    - { get: git-postgres, resource: resource-postgres}
+    - { get: ci-scripts, resource: resource-scripts}
+  - task: build-postgres-image
+    config:
+      platform: linux
+      image: docker:///sgriddalur/ubuntu-gcc#v2
+      inputs:
+      - name: git-postgres
+      - name: ci-scripts
+      run:
+        path: bash
+        args: ["./ci-scripts/build.sh", "."]
+#        path: ls 
+#        args: ["-lR"]
+- name: packer-builder-image-build
+  public: true
+  plan:
+  - get: ci-scripts
+    resource: packer-builder-image-src
+    trigger: true
+  - put: packer-builder-docker-image
+    resource: packer-builder-image
+    params:
+      build: ci-scripts/packer
+
+- name: postgres-toolchain-image-build
+  serial: true
+  public: true
+  plan:
+#  - aggregate:
+    #- get: centos67-java7-stack-image
+    #  trigger: true
+    #  passed: [centos-os-java-stack-image-build]
+#    - get: src
+#      resource: hawq-toolchain-build-image-src
+#      trigger: true
+  - task: packer_build
+    privileged: true
+    config:
+      platform: linux
+      image: docker:///sgriddalur/packer-builder
+      inputs:
+        - name: src
+          path: ci-infrastructure
+      run:
+        path: /opt/bin/packer-build.sh
+        args:
+          - ci-infrastructure/packer/build-images/toolchain-image/hawq/hawq_toolchain_image.json
+          - packer_build/hawq_toolchain_image.tar
+      outputs:
+        - name: packer_build
+  - task: serverspec
+    privileged: true
+    config:
+      platform: linux
+      image: docker:///sgriddalur/packer-builder
+      inputs:
+        - name: src
+          path: ci-infrastructure
+        - name: packer_build
+          path: packer_build
+      run:
+        path: ci-infrastructure/packer/build-images/toolchain-image/hawq/hawq_toolchain_spec.bash
+  - put: postgres-toolchain-image
+    resource: postgres-toolchain-image
+    params:
+      import_file: packer_build/hawq_toolchain_image.tar
+- name: compile-postgres
+  serial: true
+  plan:
+  - aggregate:
+    - get: ci-scripts
+      resource: resource-scripts
+      trigger: true
+    - get: git-postgres
+      resource: resource-postgres
+      trigger: true
+#    - get: hawq_rpm_build_number
+  - aggregate:
+    - task: print_environment
+      config:
+        platform: linux
+        image: docker:///sgriddalur/postgres-toolchain-image
+        inputs:
+          - name: ci-scripts
+        run:
+          path: ci-scripts/scripts/print_environment.bash
+    - task: build_postgres
+      config:
+        platform: linux
+        image: docker:///sgriddalur/postgres-toolchain-image
+        inputs:
+          - name: ci-scripts
+            path: resource-scripts
+          - name: git-postgres
+            path: resource-postgres
+#          - name: hawq_rpm_build_number
+#            path: hawq_rpm_build_number
+        run:
+          path: resource-scripts/scripts/build_postgresql.sh
+#          args:
+##            - hawq_src
+#            - compiled_hawq_src
+        outputs:
+          - name: compiled_postgres
+  - task: package_postgres
+    config:
+      platform: linux
+      image: docker://sgriddalur/postgres-toolchain-image
+      inputs:
+        - name: ci-scripts
+          path: resource-scripts
+        - name: compiled_postgres
+          path: compiled_postgres
+#        - name: hawq_rpm_build_number
+      run:
+        path: resource-scripts/scripts/package_postgres.sh
+        args:
+          - compiled_postgres
+#          - hawq_rpm_build_number/number
+      outputs:
+        - path: build
+          name: hawq_package_dir
+#  - aggregate:
+#    - put: hawq_compiled_s3_resource
+#      params:
+#        from: hawq_package_dir/hawq_compiled_src_.*\.tgz
+#        to: hawq_compiled_src/
+#    - put: hawq_rpm_s3_resource
+#      params:
+#        from: hawq_package_dir/RPMS/x86_64/hawq-.*\.rpm
+#        to: hawq_rpm/
+#    - put: hawq_rpm_build_number
+#      params:
+#        file: hawq_rpm_build_number/number
+#        bump: major
+
+- name: checkinstall-postgres
+
+resources:
+- name: resource-postgres
+  type: git
+  source:
+    uri: https://github.com/postgres/postgres.git
+- name: resource-scripts
+  type: git
+  source:
+   uri: https://github.com/llee-techops/build-pgsql.git
+- name: packer-builder-image-src
+  type: git
+  source:
+    uri: https://github.com/llee-techops/build-pgsql.git
+    paths:
+      - packer/Dockerfile
+      - packer/scripts/*
+- name: packer-builder-image
+  type: docker-image
+  source:
+    repository: docker:///sgriddalur/packer-builder
+    tag: latest
+
+- name: postgres-toolchain-image
+  type: docker-image
+  source:
+    repository: docker:///sgriddalur/postgres-toolchain-image
