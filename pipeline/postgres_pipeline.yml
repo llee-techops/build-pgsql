@@ -12,6 +12,9 @@ groups:
   - compile-postgres
   - checkinstall-postgres
 - name: test
+
+
+
 ### Jobs ###
 jobs:
 - name: job-build-postgres
@@ -49,9 +52,9 @@ jobs:
   public: true
   plan:
 #  - aggregate:
-    #- get: centos67-java7-stack-image
-    #  trigger: true
-    #  passed: [centos-os-java-stack-image-build]
+#    - get: centos67-java7-stack-image
+#      trigger: true
+#      passed: [centos-os-java-stack-image-build]
 #    - get: src
 #      resource: hawq-toolchain-build-image-src
 #      trigger: true
@@ -61,7 +64,7 @@ jobs:
       platform: linux
       image: docker:///sgriddalur/packer-builder
       inputs:
-        - name: src
+        - name: ci-scripts
           path: ci-infrastructure
       run:
         path: /opt/bin/packer-build.sh
@@ -178,9 +181,14 @@ resources:
   type: docker-image
   source:
     repository: sgriddalur/packer-builder
-    tag: latest
+    email: sgriddal@gmail.com
+    username: sgriddalur
+    password: {{docker-pass}}
 
 - name: postgres-toolchain-image
   type: docker-image
   source:
     repository: sgriddalur/postgres-toolchain-image
+    email: sgriddal@gmail.com
+    username: sgriddalur
+    password: {{docker-pass}}

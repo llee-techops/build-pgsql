@@ -1,0 +1,21 @@
+{
+  "variables": {
+    "image_name": "ubuntu-os-image",
+    "image_tag": "14.04"
+  },
+  "description": "ubuntu 14.04",
+  "builders": [
+    {
+      "type": "docker",
+      "image": "ubuntu:14.04",
+      "pull": true,
+      "export_path": "{{user `export_path`}}"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "script": "update_and_clean_installer_repo.bash"
+    }
+  ]
+}
